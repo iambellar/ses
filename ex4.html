@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculation Options</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f4f6f9;
+            color: #333;
+            font-family: 'Arial', sans-serif;
+        }
+        .card {
+            margin-top: 20px;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        .card-header {
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+        .result-box {
+            background-color: #e9ecef;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .result-grade {
+            font-size: 28px;
+            font-weight: bold;
+            color: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2>Choose Calculation Method</h2>
+            </div>
+            <div class="card-body">
+                <form id="choiceForm">
+                    <div class="form-group">
+                        <label>Select the calculation method:</label><br>
+                        <input type="radio" id="Qincome" name="calculationType" value="Qincome"> Calculate from Income<br>
+                        <input type="radio" id="asset" name="calculationType" value="asset"> Calculate from Asset<br><br>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-block" onclick="showSelectedForm()">Next</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="QincomeForm" class="card" style="display: none;">
+            <div class="card-header">
+                <h2>Income Calculation</h2>
+            </div>
+            <div class="card-body">
+                <form id="incomeCalcForm">
+                    <div class="form-group">
+                        <label for="income">Enter your income:</label>
+                        <input type="number" id="income" name="income" class="form-control">
+                    </div>
+                    <button type="button" class="btn btn-primary btn-block" onclick="calculateIncomeGrade()">Submit</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="assetForm" class="card" style="display: none;">
+            <div class="card-header">
+                <h2>Asset OWNERSHIP</h2>
+            </div>
+            <div class="card-body">
+                <form id="questionnaireForm">
+                    <!-- Question 1: City -->
+                    <div class="form-group">
+                        <label for="q0">1. What is your city?</label><br>
+                        <input type="radio" id="q0a" name="q0" value="BKK"> 1. BKK<br>
+                        <input type="radio" id="q0b" name="q0" value="Not BKK"> 2. Not BKK<br>
+                        <input type="radio" id="q0c" name="q0" value="Other"> 3. Other<br><br>
+                    </div>
+                    
+                    <!-- Question 2: Marital Status -->
+                    <div class="form-group">
+                        <label for="q1">2. What is your marital status?</label><br>
+                        <input type="radio" id="q1a" name="q1" value="A. Single"> A. Single<br>
+                        <input type="radio" id="q1b" name="q1" value="B. Couple"> B. Couple<br>
+                        <input type="radio" id="q1c" name="q1" value="C. Family"> C. Family<br><br>
+                    </div>
+
+                    <!-- Question 3: Motorcycles -->
+                    <div class="form-group">
+                        <label for="q2">3. How many Motorcycles are in your household?</label>
+                        <input type="number" id="q2" name="q2" class="form-control">
+                    </div>
+
+                    <!-- Question 4: Cars, Pick-ups, Vans -->
+                    <div class="form-group">
+                        <label for="q3">4. How many Cars, Pick-ups, and Vans are in your household?</label>
+                        <input type="number" id="q3" name="q3" class="form-control">
+                    </div>
+
+                    <!-- Question 5: Televisions -->
+                    <div class="form-group">
+                        <label for="q4">5. How many Televisions (LCD/LED/PLASMA/Smart) are in your household?</label>
+                        <input type="number" id="q4" name="q4" class="form-control">
+                    </div>
+
+                    <!-- Question 6: Electric fans -->
+                    <div class="form-group">
+                        <label for="q5">6. How many Electric fans are in your household?</label>
+                        <input type="number" id="q5" name="q5" class="form-control">
+                    </div>
+
+                    <!-- Question 7: Electricity bill -->
+                    <div class="form-group">
+                        <label for="q6">7. How much is your monthly Electricity bill?</label>
+                        <input type="number" id="q6" name="q6" class="form-control">
+                    </div>
+
+                    <!-- Question 8: Water Supply bill -->
+                    <div class="form-group">
+                        <label for="q7">8. How much is your monthly Water Supply bill?</label>
+                        <input type="number" id="q7" name="q7" class="form-control">
+                    </div>
+
+                    <button type="button" class="btn btn-primary btn-block" onclick="calculateAssetScore()">Submit</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="resultBox" class="result-box" style="display: none;">
+            <div class="result-grade" id="resultScore"></div>
+            <div class="result-grade" id="resultGrade"></div>
+        </div>
+    </div>
+
+    <script>
+        function showSelectedForm() {
+            const selectedOption = document.querySelector('input[name="calculationType"]:checked');
+
+            if (!selectedOption) {
+                alert("Please select a calculation method.");
+                return;
+            }
+
+            const selectedValue = selectedOption.value;
+
+            if (selectedValue === 'Qincome') {
+                document.getElementById('QincomeForm').style.display = 'block';
+                document.getElementById('assetForm').style.display = 'none';
+            } else if (selectedValue === 'asset') {
+                document.getElementById('QincomeForm').style.display = 'none';
+                document.getElementById('assetForm').style.display = 'block';
+            }
+        }
+
+        function calculateIncomeGrade() {
+            const income = parseFloat(document.getElementById('income').value);
+
+
+            let grades = '';
+            if (income >= 1 && income <= 1000) grades = 'A';
+            else if (income > 1000 && income <= 2000) grades = 'B';
+            else if (income > 2000 && income <= 3000) grades = 'C';
+else grades = 'F';
+
+            document.getElementById('resultGrade').innerText = "Your grade salary is: " + grades + "income is: " + income ;
+            document.getElementById('resultBox').style.display = 'block';
+        }
+
+        function calculateAssetScore() {
+            const q1 = document.querySelector('input[name="q1"]:checked');
+            if (!q1) {
+                alert("Please select your marital status.");
+                return;
+            }
+
+            const q2 = parseFloat(document.getElementById('q2').value) || 0;
+            const q3 = parseFloat(document.getElementById('q3').value) || 0;
+            const q4 = parseFloat(document.getElementById('q4').value) || 0;
+            const q5 = parseFloat(document.getElementById('q5').value) || 0;
+            const q6 = parseFloat(document.getElementById('q6').value) || 0;
+            const q7 = parseFloat(document.getElementById('q7').value) || 0;
+
+          let score = (q2 * 0.1) + (q3 * 0.2) + (q4 * 0.3) + (q5 * 0.4) + (q6 * 0.5) + (q7 * 0.6);
+        let grade = determineGrade(score, q1.value);
+
+        document.getElementById('resultScore').innerText = "Your score is: " + score.toFixed(2);
+        document.getElementById('resultGrade').innerText = "Your grade is: " + grade;
+        document.getElementById('resultBox').style.display = 'block';
+    }
+
+    function determineGrade(score, maritalStatus) {
+        if (maritalStatus === "A. Single") {
+            if (score <= 1.1) return 'A';
+            else if (score <= 2.1) return 'B';
+            else if (score <= 2.2) return 'C';
+            else if (score <= 2.3) return 'D';
+            else return 'E';
+        } else if (maritalStatus === "B. Couple") {
+            if (score <= 1.1) return 'ก';
+            else if (score <= 2.1) return 'ข';
+            else if (score <= 2.2) return 'ค';
+            else if (score <= 2.3) return 'ง';
+            else return 'จ';
+        } else { // "C. Family"
+            if (score <= 1.1) return 'q';
+            else if (score <= 2.1) return 'w';
+            else if (score <= 2.2) return 'e';
+            else if (score <= 2.3) return 'r';
+            else return 't';
+        }
+    }
+</script>
+
+</body>
+</html>
